@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,58 +6,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>إدارة نتائج الطلاب</title>
 <style>
-body{font-family:Arial;background:#;padding:20px}
-.container{max-width:800px;margin:auto;background:white;padding:20px;border-radius:15px}
-h1{text-align:center;color:#}
-input,button{padding:10px;margin:5px;border-radius:8px;border:1px solid #ccc;width:calc(100% - 22px)}
-button{background:#;color:white;border:none;cursor:pointer;font-weight:bold}
-button:hover{background:#}
+body{font-family:Arial;background:lightgrey;padding:20px}
+.container{max-width:800px;margin:auto;background:white;padding:20px;border-radius:10px}
+h1{text-align:center;color:black}
+input,button{padding:10px;margin:5px;border-radius:8px;border:1px solid grey}
+button{background:blue;color:white;border:none;cursor:pointer}
+button:hover{background:darkblue}
 table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{border:1px solid #ddd;padding:10px;text-align:center}
-th{background:#;color:white}
-.del{background:#}
+th,td{border:1px solid lightgrey;padding:10px;text-align:center}
+th{background:blue;color:white}
+.del{background:red}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>📚 إدارة نتائج الطلاب</h1>
+<h1>إدارة نتائج الطلاب</h1>
 <input id="name" placeholder="اسم الطالب">
-<input id="sub1" type="number" placeholder="درجة العربي">
-<input id="sub2" type="number" placeholder="درجة الرياضيات">
-<input id="sub3" type="number" placeholder="درجة العلوم">
-<button onclick="addStudent()">إضافة طالب</button>
-<input id="search" placeholder="🔍 ابحث باسم الطالب..." onkeyup="show()">
+<input id="subject" placeholder="المادة">
+<input id="grade" placeholder="الدرجة" type="number">
+<button onclick="addStudent()">إضافة</button>
 <table>
-<tr><th>الاسم</th><th>عربي</th><th>رياضيات</th><th>علوم</th><th>المجموع</th><th>النسبة</th><th>حذف</th></tr>
+<thead><tr><th>الاسم</th><th>المادة</th><th>الدرجة</th><th>حذف</th></tr></thead>
 <tbody id="list"></tbody>
 </table>
 </div>
 <script>
-let students = JSON.parse(localStorage.getItem('students')||'[]');
+let students = JSON.parse(localStorage.getItem('students') || '[]');
+function show(){
+let list = document.getElementById('list');
+list.innerHTML = '';
+students.forEach((s,i)=>{
+list.innerHTML += '<tr><td>'+s.name+'</td><td>'+s.subject+'</td><td>'+s.grade+'</td><td><button class="del" onclick="delStudent('+i+')">حذف</button></td></tr>';
+});
+}
 function addStudent(){
-let n=document.getElementById('name').value;
-let a=+document.getElementById('sub1').value;
-let b=+document.getElementById('sub2').value;
-let c=+document.getElementById('sub3').value;
-if(!n||!a||!b||!c){alert('اكتبي كل البيانات');return;}
-students.push({n,a,b,c});
+let name = document.getElementById('name').value;
+let subject = document.getElementById('subject').value;
+let grade = document.getElementById('grade').value;
+if(!name || !subject || !grade){alert('اكملي كل البيانات');return;}
+students.push({name:name,subject:subject,grade:grade});
 localStorage.setItem('students',JSON.stringify(students));
-document.getElementById('name').value='';document.getElementById('sub1').value='';document.getElementById('sub2').value='';document.getElementById('sub3').value='';
 show();
 }
-function show(){
-let s=document.getElementById('search').value.toLowerCase();
-let html='';
-students.forEach((st,i)=>{
-if(st.n.toLowerCase().includes(s)){
-let total=st.a+st.b+st.c;
-let per=Math.round(total/3);
-html+=`<tr><td>${st.n}</td><td>${st.a}</td><td>${st.b}</td><td>${st.c}</td><td>${total}</td><td>${per}%</td><td><button class="del" onclick="del(${i})">حذف</button></td></tr>`;
-}
-});
-document.getElementById('list').innerHTML=html;
-}
-function del(i){students.splice(i,1);localStorage.setItem('students',JSON.stringify(students));show();}
+function delStudent(i){students.splice(i,1);localStorage.setItem('students',JSON.stringify(students));show();}
 show();
 </script>
 </body>
